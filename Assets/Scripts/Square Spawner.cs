@@ -35,12 +35,12 @@ public class SquareSpawner : MonoBehaviour
 
        if(scroll > 0)
         {
-            squareSize--;
+            squareSize++;
         }
 
        if(scroll < 0)
         {
-            squareSize++;
+            squareSize--;
         }
 
        
