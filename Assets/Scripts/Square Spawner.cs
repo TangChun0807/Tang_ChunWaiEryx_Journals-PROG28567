@@ -1,4 +1,4 @@
-using NUnit.Framework;
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class SquareSpawner : MonoBehaviour
 {
-    float squareSize = 1.0f;
+    float squareSize = 1f;
     Vector2 lastMousePosition = Vector2.zero;
     List<Vector2> squarePositions = new List<Vector2>();
 
@@ -35,12 +35,12 @@ public class SquareSpawner : MonoBehaviour
 
        if(scroll > 0)
         {
-            squareSize++;
+            squareSize--;
         }
 
        if(scroll < 0)
         {
-            squareSize--;
+            squareSize++;
         }
 
        

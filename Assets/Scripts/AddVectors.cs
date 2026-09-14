@@ -16,20 +16,28 @@ public class AddVectors : MonoBehaviour
         // When the R key is held down, draw a red line from the origin to rTransform's position.​
         // When the R and B keys are both held down, draw a magenta from the origin to rPlusB.​
 
-        if (Keyboard.current.bKey.isPressed)
-        {
-            Debug.DrawLine(Vector2.zero, blueTransform.position, Color.blue);
-        }
-
-        if (Keyboard.current.rKey.isPressed)
-        {
-            Debug.DrawLine(Vector2.zero, redTransform.position, Color.red);
-        }
-
         if (Keyboard.current.rKey.isPressed && Keyboard.current.bKey.isPressed)
         {
             Debug.DrawLine(Vector2.zero, rPlusB, Color.magenta);
         }
+        else { 
+
+
+            if (Keyboard.current.bKey.isPressed)
+            {
+                Debug.DrawLine(Vector2.zero, blueTransform.position, Color.blue);
+            }
+
+            if (Keyboard.current.rKey.isPressed)
+            {
+                Debug.DrawLine(Vector2.zero, redTransform.position, Color.red);
+            }
+
+
+
+        }
+
+
 
         // Exercise: Calculating Magnitude
         // Calculate the magnitude of bPlusR using the mathematical formula for calculating the length of a vector – Pythagorean Theroem.​
