@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public Transform enemyTransform;
     public GameObject bombPrefab;
     public List<Transform> asteroidTransforms;
+    public Vector2 bombOffSet;
 
     void Start()
     {
@@ -21,7 +22,7 @@ public class Player : MonoBehaviour
     {
         if (Keyboard.current.bKey.wasPressedThisFrame)
         {
-            SpawnBombAtOffset(Vector3.up);
+            SpawnBombAtOffset(bombOffSet);
         }
 
     }
