@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     public int numberOfTrailBomb;
     public int distance;
     public float warpRatio;
+    public float inMaxRange;
+    
     
 
     void Start()
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
 
         bombOffset = new Vector2(1, 1);
         distance = 3;
+        inMaxRange = 10;
     }
 
     // Update is called once per frame
@@ -47,6 +50,11 @@ public class Player : MonoBehaviour
         if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             warpPlayer(enemyTransform, warpRatio);
+        }
+
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+        {
+            detectAsteroids(inMaxRange, asteroidTransforms);
         }
 
         
@@ -122,6 +130,25 @@ public class Player : MonoBehaviour
         transform.position = warpPosition;
     }
 
+    void detectAsteroids(float inMaxRange, List<Transform> inAsteroids)
+    {
+        for(int i = 0; i < inAsteroids.Count; i++)
+        {
+            float distance = Vector3.Distance(transform.position, inAsteroids[i].position);
+           
+            Vector3 direction = inAsteroids[i].position - transform.position;
+
+            Vector3 endPosition = transform.position + direction.normalized * 2.5f;
+
+            if (distance <= inMaxRange)
+            {
+                Debug.DrawLine(transform.position, endPosition, Color.green);
+            }
+
+        }
+
+       
+    }
     
 }
 
