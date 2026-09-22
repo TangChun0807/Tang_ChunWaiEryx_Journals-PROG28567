@@ -11,14 +11,17 @@ public class Player : MonoBehaviour
     public Vector2 bombOffset;
     public float bombTrailSpacing;
     public int numberOfTrailBomb;
+    public int distance;
 
     void Start()
     {
         Debug.Log(NormalizeVector(new Vector2(3, 4)));
         Debug.Log(NormalizeVector(new Vector2(-3, 2)));
         Debug.Log(NormalizeVector(new Vector2(1.5f, -3.5f)));
+        
 
         bombOffset = new Vector2(1, 1);
+        distance = 3;
     }
 
     // Update is called once per frame
@@ -33,6 +36,13 @@ public class Player : MonoBehaviour
         {
             spawnTrailBomnb(bombTrailSpacing, numberOfTrailBomb);
         }
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            spawnBombOnRandomCorner(distance);
+        }
+
+        
 
     }
 
@@ -66,8 +76,31 @@ public class Player : MonoBehaviour
 
     void spawnBombOnRandomCorner(float distance)
     {
-        int randomCornerPosition = UnityEngine.Random.Range(0, 4);
+        int randomInt= UnityEngine.Random.Range(0, 4);
 
+        Vector2 randomDirection = new Vector2();
+
+        if(randomInt == 0)
+        {
+            randomDirection = Vector2.up + Vector2.left;
+        }
+        if(randomInt == 1)
+        {
+            randomDirection = Vector2.up + Vector2.right;
+        }
+        if (randomInt == 2)
+        {
+            randomDirection = Vector2.down + Vector2.left;
+        }
+        if(randomInt == 3)
+        {
+            randomDirection = Vector2.down + Vector2.right;
+        }
+
+        Vector2 randomOffset = randomDirection.normalized * distance;
+        
+        SpawnBombAtOffset(randomOffset);
+        Debug.Log(randomOffset);
     }
     
 }
