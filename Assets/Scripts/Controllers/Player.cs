@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
         if (Keyboard.current.tKey.wasPressedThisFrame)
         {
-            spawnTrailBomnb(bombTrailSpacing, numberOfTrailBomb);
+            spawnBombTrail(bombTrailSpacing, numberOfTrailBomb);
         }
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
         return outVector;
     }
 
-    void spawnTrailBomnb(float bombTrailSpacing, int numberOfTrailBomb)
+    void spawnBombTrail(float bombTrailSpacing, int numberOfTrailBomb)
     {
 
         Vector2 trailBombOffset = new Vector2();
