@@ -57,7 +57,13 @@ public class Player : MonoBehaviour
             detectAsteroids(inMaxRange, asteroidTransforms);
         }
 
-        
+
+        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
+        {
+
+        }
+
+        playerMovement();
 
     }
 
@@ -148,6 +154,43 @@ public class Player : MonoBehaviour
         }
 
        
+    }
+
+    void playerMovement()
+    {
+        if (Keyboard.current.leftArrowKey.isPressed)
+        {
+
+            transform.position += Vector3.left;
+        }
+
+        if (Keyboard.current.rightArrowKey.isPressed)
+        {
+            transform.position += Vector3.right;
+        }
+
+
+        if (Keyboard.current.upArrowKey.isPressed)
+        {
+            transform.position += Vector3.up;
+        }
+
+
+        if (Keyboard.current.downArrowKey.isPressed)
+        {
+            transform.position += Vector3.down;
+        }
+
+
+
+
+
+
+
+        if (Keyboard.current.wKey.wasPressedThisFrame)
+        {
+            warpPlayer(enemyTransform, warpRatio);
+        }
     }
     
 }
