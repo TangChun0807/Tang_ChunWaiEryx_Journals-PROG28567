@@ -24,9 +24,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(NormalizeVector(new Vector2(3, 4)));
-        Debug.Log(NormalizeVector(new Vector2(-3, 2)));
-        Debug.Log(NormalizeVector(new Vector2(1.5f, -3.5f)));
+       
         
         
 
