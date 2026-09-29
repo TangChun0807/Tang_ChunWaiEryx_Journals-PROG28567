@@ -14,10 +14,10 @@ public class Stars : MonoBehaviour
     Vector3 directionVector;
 
     public float currentDistance = 0f;
-    
-    public  int i = 0;
 
-    // Update is called once per frame
+    public int i = 0;
+
+ 
     void Update()
     {
         DrawConstellation();
@@ -25,25 +25,43 @@ public class Stars : MonoBehaviour
 
     private void DrawConstellation()
     {
-        if ((currentDistance < 0.01) && (i < starTransforms.Count - 1)) { 
-        
+       
+        if (currentDistance < 0.01f && i < starTransforms.Count - 1)
+        {
             directionVector = starTransforms[i + 1].position - starTransforms[i].position;
-            velocity = directionVector.magnitude / drawingTime * directionVector.normalized;
+
+            velocity =   directionVector.magnitude / drawingTime * directionVector.normalized;
+
+       
+
             currentPosition = starTransforms[i].position;
+
+
+            currentDistance = Vector3.Distance(currentPosition, starTransforms[i + 1].position);
+               
+        }
+
+       
+        if (currentDistance >= 0.01f && i < starTransforms.Count - 1)
+
+        {
+            currentPosition += velocity * Time.deltaTime;
+
+
+
             currentDistance = Vector3.Distance(currentPosition, starTransforms[i + 1].position);
 
-            i++;
-        }
 
+            Debug.DrawLine(starTransforms[i].position, currentPosition, Color.blue);
+               
+     
 
-        if(currentDistance >= 0.01)
-        {
-                currentPosition += velocity * Time.deltaTime;
-                currentDistance = Vector3.Distance(currentPosition, starTransforms[i + 1].position);    
-                Debug.DrawLine(starTransforms[i].position, currentPosition, Color.red);
-
+            if (currentDistance < 0.01f)
+            {
+                i++;
+            }
         }
     }
-       
- }
+}
+    
 

@@ -31,7 +31,6 @@ public class Asteroid : MonoBehaviour
 
 
 
-
         if (currentDistance < arrivalDistance)
 
         {
@@ -51,7 +50,7 @@ public class Asteroid : MonoBehaviour
           
         }
 
-        Debug.DrawLine(startPosition, endPosition, Color.red);
+       // Debug.DrawLine(startPosition, endPosition, Color.red);
         velocity = moveSpeed * randomVector3.normalized;
         transform.position += velocity * Time.deltaTime;
         currentDistance = Vector3.Distance(transform.position, endPosition);
