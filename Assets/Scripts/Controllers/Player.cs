@@ -14,14 +14,20 @@ public class Player : MonoBehaviour
     public int distance;
     public float warpRatio;
     public float inMaxRange;
-    
-    
+    [Space(100)]
+    public float maxSpeed = 1f;
+    public float accelerationTime = 1f;
+    Vector3 acceleration;
+    private Vector3 velocity = Vector3 .zero;
+    public float decelerationTime = 1f;
+
 
     void Start()
     {
         Debug.Log(NormalizeVector(new Vector2(3, 4)));
         Debug.Log(NormalizeVector(new Vector2(-3, 2)));
         Debug.Log(NormalizeVector(new Vector2(1.5f, -3.5f)));
+        
         
 
         bombOffset = new Vector2(1, 1);
@@ -58,10 +64,7 @@ public class Player : MonoBehaviour
         }
 
 
-        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
-        {
-
-        }
+       
 
         playerMovement();
 
@@ -158,40 +161,40 @@ public class Player : MonoBehaviour
 
     void playerMovement()
     {
+
+        acceleration = (Vector3.zero - velocity) / decelerationTime;
+
         if (Keyboard.current.leftArrowKey.isPressed)
         {
 
-            transform.position += Vector3.left;
+            acceleration = (maxSpeed * Vector3.left - velocity) / accelerationTime;
+
         }
 
         if (Keyboard.current.rightArrowKey.isPressed)
         {
-            transform.position += Vector3.right;
+            acceleration = (maxSpeed * Vector3.right - velocity) / accelerationTime;
         }
 
 
         if (Keyboard.current.upArrowKey.isPressed)
         {
-            transform.position += Vector3.up;
+            acceleration = (maxSpeed * Vector3.up - velocity) / accelerationTime;
         }
 
 
         if (Keyboard.current.downArrowKey.isPressed)
         {
-            transform.position += Vector3.down;
+            acceleration = (maxSpeed * Vector3.down - velocity) / accelerationTime;
         }
 
 
 
 
+        velocity += acceleration * Time.deltaTime;
+        transform.position += velocity * Time.deltaTime;
 
-
-
-        if (Keyboard.current.wKey.wasPressedThisFrame)
-        {
-            warpPlayer(enemyTransform, warpRatio);
-        }
     }
-    
+
 }
 

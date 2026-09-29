@@ -855,7 +855,6 @@ MonoBehaviour:
   startPosition: {x: 0, y: 0, z: 0}
   endPosition: {x: 0, y: 0, z: 0}
   randomVector3: {x: 0, y: 0, z: 0}
-  currentDistance: 0
 --- !u!850595691 &1751276764
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -1141,10 +1140,6 @@ PrefabInstance:
     - target: {fileID: 164800845355225373, guid: 1e8384f9fd25ee34d917c3caecdc0a45, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5749485833328937868, guid: 1e8384f9fd25ee34d917c3caecdc0a45, type: 3}
-      propertyPath: drawingTime
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9032696404556402549, guid: 1e8384f9fd25ee34d917c3caecdc0a45, type: 3}
       propertyPath: m_Name
