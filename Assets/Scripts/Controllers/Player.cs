@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
     Vector3 acceleration;
     private Vector3 velocity = Vector3 .zero;
     public float decelerationTime = 1f;
+    public GameObject powerUpPrefabs;
+   
 
 
     void Start()
@@ -65,6 +67,13 @@ public class Player : MonoBehaviour
        
 
         playerMovement();
+
+        
+         enemyRadar(5, 5);
+
+        
+      
+
 
     }
 
@@ -192,6 +201,61 @@ public class Player : MonoBehaviour
         velocity += acceleration * Time.deltaTime;
         transform.position += velocity * Time.deltaTime;
 
+    }
+
+
+    void enemyRadar(float radius, int circlePoints)
+    {
+
+
+
+        float distance = Vector3.Distance(transform.position, enemyTransform.position);
+
+        Color radarColor = Color.green;
+
+        float radians= 0f;
+
+
+        if(distance < radius)
+        {
+           radarColor = Color.red;
+        }
+       
+
+        //Debug.DrawLine(transform.position, enemyTransform.position, radarColor);
+
+        for(int i =0; i < circlePoints; i++)
+        {
+            Vector3 Start = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius + transform.position;
+            radians += 360f / circlePoints * Mathf.Deg2Rad;
+            Vector3 End = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius + transform.position;
+            Debug.DrawLine(Start, End, radarColor);
+
+
+
+
+
+        }
+
+
+
+
+    }
+
+    void spawnPowerups(float radius, int numberOfPowerUps)
+    {
+
+         float radians = 0f;
+
+        for(int i =0; i <numberOfPowerUps; i++)
+        {
+            for i = 0, i < numberOfPowerups, i++
+            Vector3 offset = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius
+
+            radians += 360f / circlePoints * Mathf.Deg2Rad;
+           Instantiate(powerUpPrefabs, transform.position + offset, quarternion.identity)
+
+        }
     }
 
 }
