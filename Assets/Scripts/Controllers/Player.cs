@@ -20,8 +20,9 @@ public class Player : MonoBehaviour
     Vector3 acceleration;
     private Vector3 velocity = Vector3 .zero;
     public float decelerationTime = 1f;
+    public List<GameObject> spawnObject = new List<GameObject>();
     public GameObject powerUpPrefabs;
-   
+    
 
 
     void Start()
@@ -71,8 +72,10 @@ public class Player : MonoBehaviour
         
          enemyRadar(5, 5);
 
-        
-      
+        spawnPowerups(2,5);
+
+
+
 
 
     }
@@ -242,21 +245,33 @@ public class Player : MonoBehaviour
 
     }
 
+
     void spawnPowerups(float radius, int numberOfPowerUps)
     {
-
-         float radians = 0f;
-
-        for(int i =0; i <numberOfPowerUps; i++)
+      
+        for (int i = 0; i < spawnObject.Count; i++)
         {
-            for i = 0, i < numberOfPowerups, i++
-            Vector3 offset = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius
+            Destroy(spawnObject[i]);
+        }
+        spawnObject.Clear();
 
-            radians += 360f / circlePoints * Mathf.Deg2Rad;
-           Instantiate(powerUpPrefabs, transform.position + offset, quarternion.identity)
+        float radians = 0f;
+        float step = 360f / numberOfPowerUps * Mathf.Deg2Rad;
 
+        for (int i = 0; i < numberOfPowerUps; i++)
+        {
+          
+            Vector3 offset = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians)) * radius;
+
+            GameObject newPowerup = Instantiate(powerUpPrefabs, transform.position + offset, Quaternion.identity);
+
+            spawnObject.Add(newPowerup);
+
+            radians += step;
         }
     }
+
+
 
 }
 
