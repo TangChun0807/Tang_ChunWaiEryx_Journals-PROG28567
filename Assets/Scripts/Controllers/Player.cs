@@ -24,6 +24,10 @@ public class Player : MonoBehaviour
     public GameObject powerUpPrefabs;
     public int laserAmmo = 5;
     public float laserRange = 10f;
+    public float yellowAngle = 90f;
+    public float purpleAngle = 90f;
+    public float rotationSpeed = 90f;
+    public float laserLength = 5f;
 
 
 
@@ -83,7 +87,7 @@ public class Player : MonoBehaviour
             laserShooting();
         }
 
-
+        rotateLasers();
 
 
 
@@ -296,6 +300,31 @@ public class Player : MonoBehaviour
         }
     }
 
+    void rotateLasers()
+    {
+        if (Keyboard.current.jKey.isPressed)
+        {
+            yellowAngle += rotationSpeed * Time.deltaTime;
+        }
+
+        if (Keyboard.current.kKey.isPressed)
+        {
+            purpleAngle -= rotationSpeed * Time.deltaTime;
+        }
+
+        float yellowRadians = yellowAngle * Mathf.Deg2Rad;
+        float purpleRadians = purpleAngle * Mathf.Deg2Rad;
+
+        Vector3 yellowDirection = new Vector3(Mathf.Cos(yellowRadians), Mathf.Sin(yellowRadians), 0);
+
+        Vector3 purpleDirection = new Vector3(Mathf.Cos(purpleRadians), Mathf.Sin(purpleRadians), 0);
+      
+
+        Debug.DrawLine(transform.position, transform.position + yellowDirection * laserLength, Color.yellow);
+
+        Debug.DrawLine(transform.position, transform.position + purpleDirection * laserLength, Color.magenta);
+        
+    }
 
 
 }
