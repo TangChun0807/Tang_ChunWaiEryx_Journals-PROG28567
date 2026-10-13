@@ -22,7 +22,9 @@ public class Player : MonoBehaviour
     public float decelerationTime = 1f;
     public List<GameObject> spawnObject = new List<GameObject>();
     public GameObject powerUpPrefabs;
-    
+    public int laserAmmo = 5;
+    public float laserRange = 10f;
+
 
 
     void Start()
@@ -73,6 +75,13 @@ public class Player : MonoBehaviour
          enemyRadar(5, 5);
 
         spawnPowerups(2,5);
+
+
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            laserShooting();
+        }
 
 
 
@@ -268,6 +277,22 @@ public class Player : MonoBehaviour
             spawnObject.Add(newPowerup);
 
             radians += step;
+        }
+    }
+
+    void laserShooting()
+    {
+        if(laserAmmo > 0)
+        {
+            Vector3 direction = Vector3.up;
+
+            Vector3 endPosition = transform.position + direction * laserRange;
+
+            Debug.DrawLine(transform.position, endPosition, Color.red, 1f);
+
+            laserAmmo--;
+
+            Debug.Log("Laser Ammo: " + laserAmmo);
         }
     }
 
