@@ -1,331 +1,310 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public Transform enemyTransform;
-    public GameObject bombPrefab;
-    public List<Transform> asteroidTransforms;
-    public Vector2 bombOffset;
-    public float bombTrailSpacing;
-    public int numberOfTrailBomb;
-    public int distance;
-    public float warpRatio;
-    public float inMaxRange;
-    [Space(100)]
-    public float maxSpeed = 1f;
+   
     public float accelerationTime = 1f;
-    Vector3 acceleration;
-    private Vector3 velocity = Vector3 .zero;
     public float decelerationTime = 1f;
-    public List<GameObject> spawnObject = new List<GameObject>();
-    public GameObject powerUpPrefabs;
+    public float maxSpeed = 1f;
+    [Tooltip("Measured in Degrees per second")]
+    public float angularSpeed = 90f;
+    public Transform enemyTransform;
+    public List<Transform> asteroidTransforms = new List<Transform>();
     public int laserAmmo = 5;
-    public float laserRange = 10f;
-    public float yellowAngle = 90f;
-    public float purpleAngle = 90f;
-    public float rotationSpeed = 90f;
-    public float laserLength = 5f;
+    public float laserRange = 15f;
+    public float laserSpeed = 5f;
+    public float hitDistance = 0.7f;
+    private Vector3 laserPosition;
+    private Vector3 laserStartPosition;
+    private Vector3 laserDirection;
+    private bool laserActive = false;
+    private float acceleration;
+    private float deceleration;
+    private Vector3 velocity = Vector3.zero;
+    public float laserAngle = 90f;
+    public float laserRotationSpeed = 90f;
+    public float rotatingLaserLength = 5f;
+    public float hitAngle = 0.01f;
 
 
 
     void Start()
     {
-       
-        
-        
-
-        bombOffset = new Vector2(1, 1);
-        distance = 3;
-        inMaxRange = 10;
+        acceleration = maxSpeed / accelerationTime;
+        deceleration = maxSpeed / decelerationTime;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.bKey.wasPressedThisFrame)
-        {
-            SpawnBombAtOffset(bombOffset);
-        }
-
-        if (Keyboard.current.tKey.wasPressedThisFrame)
-        {
-            spawnBombTrail(bombTrailSpacing, numberOfTrailBomb);
-        }
-
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            spawnBombOnRandomCorner(distance);
-        }
-
-        if (Keyboard.current.wKey.wasPressedThisFrame)
-        {
-            warpPlayer(enemyTransform, warpRatio);
-        }
-
-        if (Keyboard.current.qKey.wasPressedThisFrame)
-        {
-            detectAsteroids(inMaxRange, asteroidTransforms);
-        }
-
-
-       
-
-        playerMovement();
-
-        
-         enemyRadar(5, 5);
-
-        spawnPowerups(2,5);
-
-
+        PlayerMovement();
+        PlayerRotation();
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            laserShooting();
+            shootLaser();
         }
 
-        rotateLasers();
-
+        laserAnimation();
+        rotatingLaser();
 
 
     }
 
-    void SpawnBombAtOffset(Vector3 inOffset)
+    private void PlayerMovement()
     {
-        Instantiate(bombPrefab, transform.position + inOffset, Quaternion.identity);
-    }
+        Vector3 playerInput = Vector3.zero;
+        Keyboard current = Keyboard.current;
 
-    Vector2 NormalizeVector(Vector2 inVector)
-    {
-        float magnitude = inVector.magnitude;
+        if (current.leftArrowKey.isPressed || current.aKey.isPressed)
+        {
+            playerInput += Vector3.left;
+        }
 
-        Vector2 outVector = new Vector2(inVector.x / magnitude, inVector.y / magnitude);
+        if (current.rightArrowKey.isPressed || current.dKey.isPressed)
+        {
+            playerInput += Vector3.right;
+        }
 
-        return outVector;
-    }
+        if (current.upArrowKey.isPressed || current.wKey.isPressed)
+        {
+            playerInput += Vector3.up;
+        }
 
-    void spawnBombTrail(float bombTrailSpacing, int numberOfTrailBomb)
-    {
+        if (current.downArrowKey.isPressed || current.sKey.isPressed)
+        {
+            playerInput += Vector3.down;
+        }
 
-        Vector2 trailBombOffset = new Vector2();
+        if (playerInput.sqrMagnitude > 0)
+        {
+            velocity += acceleration * Time.deltaTime * playerInput.normalized;
 
-            for (int i = 1; i <= numberOfTrailBomb; i++)
+            if (velocity.sqrMagnitude > maxSpeed * maxSpeed)
             {
-                trailBombOffset =  Vector2.down * bombTrailSpacing * i;
-
-                SpawnBombAtOffset(trailBombOffset);
+                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             }
-        
-    }
-
-    void spawnBombOnRandomCorner(float distance)
-    {
-        int randomInt= UnityEngine.Random.Range(0, 4);
-
-        Vector2 randomDirection = new Vector2();
-
-        if(randomInt == 0)
-        {
-            randomDirection = Vector2.up + Vector2.left;
         }
-        if(randomInt == 1)
+        else
         {
-            randomDirection = Vector2.up + Vector2.right;
-        }
-        if (randomInt == 2)
-        {
-            randomDirection = Vector2.down + Vector2.left;
-        }
-        if(randomInt == 3)
-        {
-            randomDirection = Vector2.down + Vector2.right;
-        }
+            float deltaVelocity = deceleration * Time.deltaTime;
 
-        Vector2 randomOffset = randomDirection.normalized * distance;
-        
-        SpawnBombAtOffset(randomOffset);
-        Debug.Log(randomOffset);
-    }
-
-    void warpPlayer(Transform target, float ratio)
-    {
-        if(ratio > 1)
-        {
-            ratio = 1;
-        }
-
-        Vector3 warpPosition = Vector3.Lerp(transform.position, target.position, ratio);
-
-        transform.position = warpPosition;
-    }
-
-    void detectAsteroids(float inMaxRange, List<Transform> inAsteroids)
-    {
-        for(int i = 0; i < inAsteroids.Count; i++)
-        {
-            float distance = Vector3.Distance(transform.position, inAsteroids[i].position);
-           
-            Vector3 direction = inAsteroids[i].position - transform.position;
-
-            Vector3 endPosition = transform.position + direction.normalized * 2.5f;
-
-            if (distance <= inMaxRange)
+            if (velocity.magnitude > deltaVelocity)
             {
-                Debug.DrawLine(transform.position, endPosition, Color.green);
+                velocity -= deltaVelocity * velocity.normalized;
             }
-
+            else
+            {
+                velocity = Vector3.zero;
+            }
         }
 
-       
-    }
-
-    void playerMovement()
-    {
-
-        acceleration = (Vector3.zero - velocity) / decelerationTime;
-
-        if (Keyboard.current.leftArrowKey.isPressed)
-        {
-
-            acceleration = (maxSpeed * Vector3.left - velocity) / accelerationTime;
-
-        }
-
-        if (Keyboard.current.rightArrowKey.isPressed)
-        {
-            acceleration = (maxSpeed * Vector3.right - velocity) / accelerationTime;
-        }
-
-
-        if (Keyboard.current.upArrowKey.isPressed)
-        {
-            acceleration = (maxSpeed * Vector3.up - velocity) / accelerationTime;
-        }
-
-
-        if (Keyboard.current.downArrowKey.isPressed)
-        {
-            acceleration = (maxSpeed * Vector3.down - velocity) / accelerationTime;
-        }
-
-
-
-
-        velocity += acceleration * Time.deltaTime;
         transform.position += velocity * Time.deltaTime;
-
     }
 
 
-    void enemyRadar(float radius, int circlePoints)
+    private void PlayerRotation()
     {
-
-
-
-        float distance = Vector3.Distance(transform.position, enemyTransform.position);
-
-        Color radarColor = Color.green;
-
-        float radians= 0f;
-
-
-        if(distance < radius)
+        if (velocity.sqrMagnitude == 0)
         {
-           radarColor = Color.red;
-        }
-       
-
-        //Debug.DrawLine(transform.position, enemyTransform.position, radarColor);
-
-        for(int i =0; i < circlePoints; i++)
-        {
-            Vector3 Start = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius + transform.position;
-            radians += 360f / circlePoints * Mathf.Deg2Rad;
-            Vector3 End = new Vector3(Mathf.Sin(radians), Mathf.Cos(radians)) * radius + transform.position;
-            Debug.DrawLine(Start, End, radarColor);
-
-
-
-
-
+            return;
         }
 
+        float deltaAngle = ComputeShortestAngle(transform.up, velocity);
 
-
-
-    }
-
-
-    void spawnPowerups(float radius, int numberOfPowerUps)
-    {
-      
-        for (int i = 0; i < spawnObject.Count; i++)
+        if (deltaAngle == 0)
         {
-            Destroy(spawnObject[i]);
+            return;
         }
-        spawnObject.Clear();
 
-        float radians = 0f;
-        float step = 360f / numberOfPowerUps * Mathf.Deg2Rad;
+        float rotationDirection = Mathf.Sign(deltaAngle);
+        float rotationStep = angularSpeed * Time.deltaTime;
 
-        for (int i = 0; i < numberOfPowerUps; i++)
+        if (rotationStep < Mathf.Abs(deltaAngle))
         {
-          
-            Vector3 offset = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians)) * radius;
-
-            GameObject newPowerup = Instantiate(powerUpPrefabs, transform.position + offset, Quaternion.identity);
-
-            spawnObject.Add(newPowerup);
-
-            radians += step;
+            transform.Rotate(0, 0, rotationStep * rotationDirection);
+        }
+        else
+        {
+            transform.Rotate(0, 0, deltaAngle);
         }
     }
 
-    void laserShooting()
+    private float ComputeShortestAngle(Vector3 a, Vector3 b)
     {
-        if(laserAmmo > 0)
+        float angleA = Mathf.Atan2(a.y, a.x) * Mathf.Rad2Deg;
+        float angleB = Mathf.Atan2(b.y, b.x) * Mathf.Rad2Deg;
+
+        return Mathf.DeltaAngle(angleA, angleB);
+    }
+
+    
+    private void shootLaser()
+    {
+        if (laserAmmo > 0 && laserActive == false)
         {
-            Vector3 direction = Vector3.up;
+            laserStartPosition = transform.position;
+            laserPosition = transform.position;
 
-            Vector3 endPosition = transform.position + direction * laserRange;
+            laserDirection = transform.up.normalized;
 
-            Debug.DrawLine(transform.position, endPosition, Color.red, 1f);
-
+            laserActive = true;
             laserAmmo--;
 
             Debug.Log("Laser Ammo: " + laserAmmo);
         }
     }
 
-    void rotateLasers()
+    // Move Laser and Check Targets
+    private void laserAnimation()
+    {
+        if (laserActive == false)
+        {
+            return;
+        }
+
+        
+        laserPosition += laserDirection * laserSpeed * Time.deltaTime;
+
+        
+        Debug.DrawLine(laserPosition, laserPosition + laserDirection, Color.red);
+
+        
+        if (enemyTransform != null)
+        {
+            float enemyDistance = Vector3.Distance(laserPosition, enemyTransform.position);
+
+
+            if (enemyDistance <= hitDistance)
+            {
+                Destroy(enemyTransform.gameObject);
+
+                laserActive = false;
+
+                Debug.Log("Enemy Destroyed!");
+                return;
+            }
+        }
+
+    
+        for (int i = asteroidTransforms.Count - 1; i >= 0; i--)
+        {
+            if (asteroidTransforms[i] == null)
+            {
+                asteroidTransforms.RemoveAt(i);
+
+            }
+            else
+            {
+
+                float asteroidDistance = Vector3.Distance(laserPosition, asteroidTransforms[i].position);
+
+
+
+                if (asteroidDistance <= hitDistance)
+                {
+                    Destroy(asteroidTransforms[i].gameObject);
+
+                    asteroidTransforms.RemoveAt(i);
+
+                    laserActive = false;
+
+                    Debug.Log("Asteroid Destroyed!");
+                    return;
+                }
+            }
+        }
+
+        float laserDistance = Vector3.Distance(laserStartPosition, laserPosition);
+
+
+
+        if (laserDistance >= laserRange)
+        {
+            laserActive = false;
+        }
+    }
+
+
+
+    public void rotatingLaser()
     {
         if (Keyboard.current.jKey.isPressed)
         {
-            yellowAngle += rotationSpeed * Time.deltaTime;
+            laserAngle += laserRotationSpeed * Time.deltaTime;
         }
 
         if (Keyboard.current.kKey.isPressed)
         {
-            purpleAngle -= rotationSpeed * Time.deltaTime;
+            laserAngle -= laserRotationSpeed * Time.deltaTime;
         }
 
-        float yellowRadians = yellowAngle * Mathf.Deg2Rad;
-        float purpleRadians = purpleAngle * Mathf.Deg2Rad;
+        if (Keyboard.current.jKey.isPressed || Keyboard.current.kKey.isPressed)
+        {
+            float radians = laserAngle * Mathf.Deg2Rad;
 
-        Vector3 yellowDirection = new Vector3(Mathf.Cos(yellowRadians), Mathf.Sin(yellowRadians), 0);
+            Vector3 direction = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f);
 
-        Vector3 purpleDirection = new Vector3(Mathf.Cos(purpleRadians), Mathf.Sin(purpleRadians), 0);
-      
+            Vector3 laserEnd = transform.position + direction * rotatingLaserLength;
 
-        Debug.DrawLine(transform.position, transform.position + yellowDirection * laserLength, Color.yellow);
+            Debug.DrawLine(transform.position, laserEnd, Color.yellow);
 
-        Debug.DrawLine(transform.position, transform.position + purpleDirection * laserLength, Color.magenta);
-        
+            
+            if (enemyTransform != null)
+            {
+                Vector3 a = enemyTransform.position - transform.position;
+                Vector3 b = laserEnd - transform.position;
+
+                float deltaAngle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(a, b) / (a.magnitude * b.magnitude), -1f, 1f)) * Mathf.Rad2Deg;
+
+
+
+                if (Vector3.Distance(transform.position, enemyTransform.position) < rotatingLaserLength && Mathf.Abs(deltaAngle) < hitAngle)
+                {
+                    Destroy(enemyTransform.gameObject);
+                    Debug.Log("Enemy Destroyed!");
+                }
+            }
+
+            
+            for (int i = asteroidTransforms.Count - 1; i >= 0; i--)
+            {
+                if (asteroidTransforms[i] == null)
+                {
+                    asteroidTransforms.RemoveAt(i);
+                }
+                else
+                {
+                    Vector3 astroA = asteroidTransforms[i].position - transform.position;
+
+                    Vector3 astroB = laserEnd - transform.position;
+
+                    float astroDeltaAngle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(astroA, astroB) / (astroA.magnitude * astroB.magnitude), -1f, 1f)) * Mathf.Rad2Deg;
+
+                    if (Vector3.Distance(transform.position, asteroidTransforms[i].position) < rotatingLaserLength && Mathf.Abs(astroDeltaAngle) < hitAngle)
+                    {
+                        Destroy(asteroidTransforms[i].gameObject);
+
+                        asteroidTransforms.RemoveAt(i);
+
+                        Debug.Log("Asteroid Destroyed!");
+                    }
+                }
+            }
+        }
     }
 
 
+
+
+
 }
+
+
+
+
+
+
 
