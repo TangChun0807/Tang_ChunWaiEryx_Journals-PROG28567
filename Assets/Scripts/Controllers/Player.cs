@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
     public float laserRotationSpeed = 90f;
     public float rotatingLaserLength = 5f;
     public float hitAngle = 0.01f;
+ 
+
 
 
 
@@ -35,6 +37,8 @@ public class Player : MonoBehaviour
     {
         acceleration = maxSpeed / accelerationTime;
         deceleration = maxSpeed / decelerationTime;
+        
+
     }
 
     void Update()
@@ -49,6 +53,9 @@ public class Player : MonoBehaviour
 
         laserAnimation();
         rotatingLaser();
+
+     
+
 
 
     }
@@ -295,6 +302,10 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+
+    
+
 
 
 
