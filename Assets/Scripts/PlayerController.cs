@@ -121,9 +121,24 @@ public class PlayerController : MonoBehaviour
 
     public FacingDirection GetFacingDirection()
     {
-        
+        if (rigi.linearVelocity.x > 0)
+        {
+            lastDirection = FacingDirection.right;
+        }
+
+        if (rigi.linearVelocity.x < 0)
+        {
+            lastDirection = FacingDirection.left;
+        }
+
+        if (lastDirection == FacingDirection.right)
+        {
+            return FacingDirection.right;
+        }
 
         return FacingDirection.left;
+
+        
     }
 }
 
