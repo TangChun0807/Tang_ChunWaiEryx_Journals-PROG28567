@@ -7,14 +7,12 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float acceleration = 15f;
     public float deceleration = 20f;
-
-    public Collider2D groundCollider;
-
     private Rigidbody2D rigi;
     private Vector2 playerInput;
     private float horizontalSpeed = 0f;
-
     private FacingDirection lastDirection = FacingDirection.left;
+
+
 
     public enum FacingDirection
     {
@@ -106,7 +104,11 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {
-       
+        if (rigi.linearVelocity.x != 0)
+        {
+            return true;
+        }
+
         return false;
     }
 
