@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 playerInput;
     private float horizontalSpeed = 0f;
     private FacingDirection lastDirection = FacingDirection.left;
+    public Collider2D groundCollier;
 
 
 
@@ -43,6 +44,7 @@ public class PlayerController : MonoBehaviour
         }
 
         MovementUpdate(input);
+        Debug.Log(IsGrounded());
     }
 
     private void MovementUpdate(Vector2 movementInput)
@@ -114,7 +116,10 @@ public class PlayerController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        
+        if (rigi.IsTouching(groundCollier))
+        {
+            return true;
+        }
 
         return false;
     }
